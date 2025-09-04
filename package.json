@@ -1,0 +1,27 @@
+{
+  "name": "my-backend-app",
+  "version": "1.0.0",
+  "main": "dist/app.js",
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.17.0",
+    "dotenv": "^17.2.1",
+    "express": "^4.21.2",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.0",
+    "mysql2": "^3.14.4",
+    "mysql2-promise": "^0.1.4",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/pg": "^8.15.5",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
