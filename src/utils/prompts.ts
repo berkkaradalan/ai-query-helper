@@ -1,22 +1,76 @@
 export const Prompts = {
-    queryHelperPrompt: (query: string, tableName: string) => `
-  You are an AI assistant that executes database queries and returns the results in JSON format. 
-  
-  Instructions:
-  1. You will be given a SQL query as input: "${query}".
-  2. The database table you should consider is: "${tableName}".
-  3. Always return the result in the following JSON format ONLY:
-  
-  {
-    "success": true,
-    "comment": "Describe what query was used and what the result is",
-    "queryData": { 
-        // key-value pairs for a single row returned
+  queryHelperPrompt: (schema_json: string, user_question: string, database_type: string) => {
+    if (database_type === "mongodb") {
+      console.log(database_type)
+      return `
+      You are an expert MongoDB query generator.
+
+      Database Schema:
+      ${schema_json}
+
+      User Question:
+      "${user_question}"
+
+      Your Task:
+      1. Generate a valid MongoDB query for the user question.
+      2. Return ONLY JSON with this exact format:
+
+      For simple find queries:
+      {
+        "success": true,
+        "comment": "Describe what query was used and why",
+        "collection": "collection_name",
+        "query": { /* MongoDB find query object */ },
+        "queryData": { "example_row": {...} }
+      }
+
+      For complex queries requiring aggregation:
+      {
+        "success": true,
+        "comment": "Describe what aggregation was used and why",
+        "collection": "collection_name", 
+        "aggregation": [ /* MongoDB aggregation pipeline */ ],
+        "queryData": { "example_row": {...} }
+      }
+
+      Rules:
+      - Use ONLY collections and fields from the schema
+      - Use sample values from schema to build realistic conditions
+      - If question needs JOIN-like operations, use $lookup in aggregation
+      - If question needs GROUP BY, use $group in aggregation
+      - Make logical assumptions for ambiguous questions
+      - Limit results to 10 documents max
+            `;
+          } else {
+            console.log(database_type)
+            return `
+      You are an expert SQL query generator.
+
+      Database Schema:
+      ${schema_json}
+
+      User Question:
+      "${user_question}"
+
+      Your Task:
+      1. Generate a valid SQL query for ${database_type}.
+      2. Return ONLY JSON with this exact format:
+
+      {
+        "success": true,
+        "comment": "Describe what query was used and why",
+        "sql": "SELECT ... FROM ... WHERE ... LIMIT 10",
+        "queryData": { "example_row": {...} }
+      }
+
+      Rules:
+      - Use ONLY tables and columns from the schema
+      - Use sample values from schema to build realistic conditions
+      - Always add LIMIT 10 to prevent large result sets
+      - Use proper SQL syntax for ${database_type}
+      - Make logical assumptions for ambiguous questions
+      - Use JOINs when question involves multiple tables
+            `;
+          }
     }
-  }
-  
-  4. If the query returns multiple rows, return only the first row.
-  5. Do NOT include any explanations, markdown, or extra text.
-  6. Fields in queryData must match exactly the column names in the database.
-  `
-  };
+};

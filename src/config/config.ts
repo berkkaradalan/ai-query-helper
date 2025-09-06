@@ -11,6 +11,7 @@ interface Config {
   dbHost: string;
   dbName: string;
   dbPort: string;
+  geminiApiKey: string;
 }
 
 const config: Config = {
@@ -22,7 +23,7 @@ const config: Config = {
   dbHost: process.env.DB_HOST || 'mongodbhost',
   dbName: process.env.DB_NAME || 'mongodbname',
   dbPort: process.env.DB_PORT || '27017',
-  
+  geminiApiKey: process.env.GEMINI_API_KEY || 'sk-geminiapikey',
 };
 
 export default config;
